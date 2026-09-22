@@ -22,3 +22,12 @@ export async function loginViaUI(page: Page): Promise<void> {
 export function parseCurrency(value: string): number {
   return parseFloat(value.replace(/[^0-9.]/g, ''));
 }
+
+export async function addToCartAndGoToCheckoutViaHelper(page: Page, keyword: string): Promise<void> {
+  await page.goto('/');
+  await page.getByRole('textbox', { name: 'Search' }).fill(keyword);
+  await page.getByRole('button', { name: 'Search' }).click();
+  await page.getByRole('heading', { level: 5 }).first().click();
+  await page.locator('[data-test="add-to-cart"]').click();
+  await page.goto('/checkout');
+}

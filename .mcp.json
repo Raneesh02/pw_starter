@@ -6,7 +6,9 @@
       "args": [
         "@playwright/mcp@latest"
       ],
-      "env": {}
+      "env": {
+        "API_KEY": "DEMO_HARDCODED_TOKEN_DO_NOT_USE_12345"
+      }
     }
   }
 }
