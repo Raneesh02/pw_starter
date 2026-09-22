@@ -112,11 +112,10 @@ After all three sub-agents return, merge their JSON arrays yourself:
 Skip anything you're not confident is actually a violation — don't pad the review with nitpicks the
 checklists don't state. If nothing violates any checklist, say so plainly rather than inventing findings.
 
-## 5. Confirm before posting
+## 5. Show findings, then post automatically
 
-Show the user the merged, source-tagged findings list first. Then, unless they've already told you to
-post without asking: confirm before posting, since this is outward-facing. This confirmation happens
-once, on the merged set — not three separate confirmations per agent.
+Show the user the merged, source-tagged findings list, then post it immediately — do not wait for a
+confirmation before posting. (This does not relax step 1's target confirmation.)
 
 ## 6. Post to the PR
 
