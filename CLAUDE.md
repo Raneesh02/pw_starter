@@ -29,7 +29,9 @@ Layered; specs should only talk to fixtures:
 
 ## Conventions
 
-- Test titles start with an ID and end with a tag: `'C01 add single product appears in cart @regression'`. Prefixes: `C` cart, `CH` checkout, and so on. Keep IDs unique because `--grep` selects on them.
+Full rules for page objects, test structure, assertion messages, banned patterns, and test IDs live in **[CODING_GUIDELINES.md](CODING_GUIDELINES.md)** — read it before writing or modifying any test or page object. Repo-specific notes not covered there:
+
+- Test titles start with an ID and end with `@regression`: `'C01 add single product appears in cart @regression'`. Prefixes: `C` cart, `CH` checkout, and so on. Keep IDs unique because `--grep` selects on them. `@regression` is currently the only tag in use.
 - Locators: role/text preferred; `[data-test="..."]` is the app's own test attribute and is used throughout.
 - Generated output (`test-output/`, `playwright-report/`, `auth.json`) should not be committed.
 
@@ -37,3 +39,4 @@ Layered; specs should only talk to fixtures:
 
 - `auth.setup.ts` is not wired as a Playwright `setup` project in `playwright.config.ts`, and no spec loads `auth.json`. Auth is not automatic; tests run as guests.
 - `tests/cart/cart_static_checks.spec.ts` (C99) is a placeholder demo with no real product assertions.
+- Existing specs predate CODING_GUIDELINES.md and are not yet fully compliant — notably, existing `expect()` calls don't have custom messages. Apply the guidelines to new and modified code; don't assume old specs are a compliant reference.
