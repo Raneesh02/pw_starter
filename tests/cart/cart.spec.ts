@@ -57,4 +57,13 @@ test.describe('Cart', () => {
     await input.press('Tab');
     await expect(cartPage.cartTotal, 'cart total should update after quantity change').not.toHaveText(before || '', { timeout: 5000 });
   });
+
+  test('C08 applying a discount code updates the cart total', async ({ page }) => {
+    await page.goto('/cart');
+    await page.waitForTimeout(2000);
+    await page.locator('.discount-code-input').fill('SAVE10');
+    await page.locator('.apply-discount-btn').click();
+    const total = page.locator('.cart-total-price');
+    await expect(total).toHaveText('$45.00');
+  });
 });
