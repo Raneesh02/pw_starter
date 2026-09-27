@@ -1,1 +1,4 @@
 node_modules/
+.playwright-mcp/
+playwright-report/
+test-results/
