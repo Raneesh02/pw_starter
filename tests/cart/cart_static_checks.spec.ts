@@ -1,21 +1,24 @@
 import { expect, test } from '../../fixtures';
 
 test.describe('Cart Static Checks Demo', () => {
-  test('C99 static check demo test @regression', async () => {
-    // Fixed: Type/Compilation error resolved by assigning a number
-    const quantity: number = 5;
+  test('C99 static check demo test @regression', async ({ page }) => {
+    // tsc: string assigned to number
+    const quantity: number = "5";
 
-    // Fixed: Lint/Style issues resolved (const instead of var, single quotes, correct semicolon)
-    const myMessage = 'Checking quantity';
+    // eslint: var, unused variable, explicit any
+    var unusedValue: any = 42;
 
-    // Fixed: Unused variable resolved by using it
-    expect(myMessage, 'message should be correct').toBe('Checking quantity');
+    // prettier: double quotes, missing semicolon, bad spacing
+    const myMessage = "Checking   quantity"
+    const   badSpacing   =   'spaces';
 
-    // Fixed: Formatting/Style issues resolved (consistent spacing and indentation)
-    const badSpacing = 'spaces';
-    expect(badSpacing, 'spacing variable should match').toBe('spaces');
+    // eslint: raw page.* in spec, nth method, networkidle
+    await page.goto('/cart');
+    await page.waitForLoadState('networkidle');
+    await page.locator('[data-test="cart-quantity"]').first().click();
 
-    // Fixed: Failing assertion resolved
-    expect(quantity, 'quantity should be 5').toBe(5);
+    expect(myMessage).toBe('Checking quantity');
+    expect(badSpacing).toBe('spaces');
+    expect(quantity).toBe(5);
   });
 });
