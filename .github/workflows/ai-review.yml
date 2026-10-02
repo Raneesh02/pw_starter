@@ -93,9 +93,11 @@ jobs:
               ## Human Review Required
               **Required:** Yes/No — **Level:** Low/Medium/High — **Reason:** ...
               (High: auth, payments, security, core config; Medium: complex page workflows; Low: routine specs.)
-              End with one line: tests: <n> passed / <n> failed
+              End with:
+              reviewers: pw-guideline-reviewer, pw-investigative-reviewer
+              tests: <n> passed / <n> failed
           claude_args: >-
-            --allowedTools "Read,Grep,Glob,Bash(git diff:*),Bash(git status:*),Bash(git log:*),Bash(npx playwright test:*),Write"
+            --allowedTools "Agent,Task,Read,Grep,Glob,Bash(git diff:*),Bash(git status:*),Bash(git log:*),Bash(npx playwright test:*),Write"
 
       - name: Post inline review
         if: steps.gate.outputs.state == 'success'
