@@ -13,12 +13,16 @@ export class CartPage {
     this.page = page;
     this.cartTable = page.getByRole('table');
     this.cartRows = page.getByRole('row').filter({ hasNot: page.getByRole('columnheader') });
-    this.cartTotal = page.getByRole('cell', { name: 'Total' }).locator('..').getByRole('cell').last();
+    this.cartTotal = page
+      .getByRole('cell', { name: 'Total' })
+      .locator('..')
+      .getByRole('cell')
+      .last();
     this.continueShoppingButton = page.getByRole('button', { name: 'Continue Shopping' });
     this.proceedToCheckoutButton = page.locator('[data-test="proceed-1"]');
   }
 
-  async navigate() {
+  async navigate(): Promise<void> {
     await this.page.goto('/checkout');
   }
 
@@ -27,14 +31,17 @@ export class CartPage {
   }
 
   getItemRemoveButton(itemName: string): Locator {
-    return this.page.getByRole('row', { name: new RegExp(itemName) }).locator('img[src*="trash"], img[alt*="delete"], td:last-child img').last();
+    return this.page
+      .getByRole('row', { name: new RegExp(itemName) })
+      .locator('img[src*="trash"], img[alt*="delete"], td:last-child img')
+      .last();
   }
 
-  async updateQuantity(itemName: string, qty: number) {
+  async updateQuantity(itemName: string, qty: number): Promise<void> {
     await this.getItemQuantityInput(itemName).fill(String(qty));
   }
 
-  async proceedToCheckout() {
+  async proceedToCheckout(): Promise<void> {
     await this.proceedToCheckoutButton.click();
   }
 }
