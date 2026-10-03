@@ -41,7 +41,7 @@ jobs:
           echo "state=$state" >> "$GITHUB_OUTPUT"
           if [ "$state" != "success" ]; then
             gh pr comment ${{ github.event.issue.number }} --repo ${{ github.repository }} \
-              --body "AI review skipped: required **static-checks** status is \`$state\`. Comment \`static_check\`, fix any failures, then comment \`ai_review\` again."
+              --body "AI review skipped: required **static-checks** status is \`$state\`. Static checks run automatically on each PR push; fix any failures, then comment \`ai_review\` again."
           fi
 
       - name: Set pending status
