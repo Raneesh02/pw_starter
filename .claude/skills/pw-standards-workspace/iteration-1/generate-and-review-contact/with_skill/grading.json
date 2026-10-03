@@ -1,0 +1,37 @@
+{
+  "eval_id": 0,
+  "eval_name": "generate-and-review-contact",
+  "configuration": "with_skill",
+  "expectations": [
+    {
+      "text": "standards-file-created",
+      "passed": true,
+      "evidence": "~490-line TEST_AUTOMATION_STANDARDS.md produced covering all 11 sections from skill skeleton"
+    },
+    {
+      "text": "standards-has-review-checklist",
+      "passed": true,
+      "evidence": "§11 Code Review Checklist: 15-row table with check / good pattern / anti-pattern columns"
+    },
+    {
+      "text": "standards-covers-all-layers",
+      "passed": true,
+      "evidence": "§3 Page Objects, §5 Fixtures, §7 Assertions, §8 Waits, §9 Test Data all present"
+    },
+    {
+      "text": "review-findings-produced",
+      "passed": true,
+      "evidence": "review_findings.md written with 0 HIGH, 3 MEDIUM, 4 LOW findings"
+    },
+    {
+      "text": "review-uses-severity-groups",
+      "passed": true,
+      "evidence": "Findings clearly grouped under ## HIGH findings, ## MEDIUM findings, ## LOW findings headers"
+    },
+    {
+      "text": "review-cross-references-standards",
+      "passed": true,
+      "evidence": "Every finding cites section numbers: 'violates §7', 'violates §3', 'violates §9', 'violates §6'"
+    }
+  ]
+}

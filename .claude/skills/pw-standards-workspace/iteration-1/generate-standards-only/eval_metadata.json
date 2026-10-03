@@ -1,0 +1,35 @@
+{
+  "eval_id": 1,
+  "eval_name": "generate-standards-only",
+  "prompt": "Generate a coding standards document for our Playwright + TypeScript test framework.",
+  "assertions": [
+    {
+      "name": "standards-file-created",
+      "description": "TEST_AUTOMATION_STANDARDS.md is produced in the outputs"
+    },
+    {
+      "name": "standards-has-architecture-section",
+      "description": "Document includes an architecture overview (layer diagram or equivalent)"
+    },
+    {
+      "name": "standards-has-locator-priority",
+      "description": "Document defines a locator priority order (getByRole first, XPath banned)"
+    },
+    {
+      "name": "standards-has-assertion-guidance",
+      "description": "Document covers web-first assertions and the intent-message requirement"
+    },
+    {
+      "name": "standards-has-wait-guidance",
+      "description": "Document explicitly calls out waitForTimeout and networkidle as anti-patterns"
+    },
+    {
+      "name": "standards-has-review-checklist",
+      "description": "Document includes a code review checklist (table or bullet list)"
+    },
+    {
+      "name": "standards-covers-project-patterns",
+      "description": "Document mentions this project's specific patterns (ShopFacade or equivalent, fixtures, ID prefix convention)"
+    }
+  ]
+}

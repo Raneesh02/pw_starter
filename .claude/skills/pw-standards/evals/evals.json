@@ -1,0 +1,105 @@
+{
+  "skill_name": "pw-standards",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "As a code reviewer, generate the test automation coding standards for this Playwright project and then review the contact tests (tests/contact/contact.spec.ts) against those standards.",
+      "expected_output": "A TEST_AUTOMATION_STANDARDS.md file and a review findings report for contact.spec.ts, grouped HIGH/MEDIUM/LOW, with findings cross-referencing the standards.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "standards-file-created",
+          "description": "TEST_AUTOMATION_STANDARDS.md is produced in the outputs"
+        },
+        {
+          "name": "standards-has-review-checklist",
+          "description": "Standards document includes a Code Review Checklist section"
+        },
+        {
+          "name": "standards-covers-all-layers",
+          "description": "Standards doc covers page objects, fixtures, assertions, waits, and test data"
+        },
+        {
+          "name": "review-findings-produced",
+          "description": "A review findings report is produced for contact.spec.ts"
+        },
+        {
+          "name": "review-uses-severity-groups",
+          "description": "Review findings are grouped by HIGH / MEDIUM / LOW severity"
+        },
+        {
+          "name": "review-cross-references-standards",
+          "description": "Review findings reference the standards document sections or rules"
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "Generate a coding standards document for our Playwright + TypeScript test framework.",
+      "expected_output": "A TEST_AUTOMATION_STANDARDS.md at the repo root covering: architecture, page objects, locator strategy, fixtures, test title format, assertions, waits, data management, TypeScript rules, and a code review checklist table.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "standards-file-created",
+          "description": "TEST_AUTOMATION_STANDARDS.md is produced in the outputs"
+        },
+        {
+          "name": "standards-has-architecture-section",
+          "description": "Document includes an architecture overview (layer diagram or equivalent)"
+        },
+        {
+          "name": "standards-has-locator-priority",
+          "description": "Document defines a locator priority order (getByRole first, XPath banned)"
+        },
+        {
+          "name": "standards-has-assertion-guidance",
+          "description": "Document covers web-first assertions and the intent-message requirement"
+        },
+        {
+          "name": "standards-has-wait-guidance",
+          "description": "Document explicitly calls out waitForTimeout and networkidle as anti-patterns"
+        },
+        {
+          "name": "standards-has-review-checklist",
+          "description": "Document includes a code review checklist (table or bullet list)"
+        },
+        {
+          "name": "standards-covers-project-patterns",
+          "description": "Document mentions this project's specific patterns (ShopFacade or equivalent, fixtures, ID prefix convention)"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Review tests/cart/cart.spec.ts and pages/cart.page.ts for Playwright best practices and report any issues.",
+      "expected_output": "A findings report grouped HIGH/MEDIUM/LOW covering at minimum: the navigate() URL mismatch, networkidle usage, assertion quality, and wait patterns.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "findings-report-produced",
+          "description": "A review_findings.md report is written to the outputs directory"
+        },
+        {
+          "name": "findings-use-severity-groups",
+          "description": "Findings are grouped by HIGH / MEDIUM / LOW severity"
+        },
+        {
+          "name": "findings-identify-navigate-url-mismatch",
+          "description": "Report flags CartPage.navigate() routing to /checkout instead of /cart"
+        },
+        {
+          "name": "findings-identify-networkidle",
+          "description": "Report flags networkidle usage in cart-related code (BasePage or ShopFacade)"
+        },
+        {
+          "name": "findings-include-concrete-fix",
+          "description": "Each finding includes a concrete fix suggestion, not just a description of the problem"
+        },
+        {
+          "name": "findings-include-file-and-line",
+          "description": "Each finding references the file and approximate line number"
+        }
+      ]
+    }
+  ]
+}

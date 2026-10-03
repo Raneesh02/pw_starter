@@ -1,0 +1,68 @@
+{
+  "skill_name": "pw-standards",
+  "iteration": 1,
+  "summary": [
+    {
+      "configuration": "with_skill",
+      "eval_name": "generate-and-review-contact",
+      "pass_rate": 1.0,
+      "passed": 6,
+      "total": 6
+    },
+    {
+      "configuration": "without_skill",
+      "eval_name": "generate-and-review-contact",
+      "pass_rate": 0.667,
+      "passed": 4,
+      "total": 6
+    },
+    {
+      "configuration": "with_skill",
+      "eval_name": "generate-standards-only",
+      "pass_rate": 1.0,
+      "passed": 7,
+      "total": 7
+    },
+    {
+      "configuration": "without_skill",
+      "eval_name": "generate-standards-only",
+      "pass_rate": 0.857,
+      "passed": 6,
+      "total": 7
+    },
+    {
+      "configuration": "with_skill",
+      "eval_name": "review-cart-files",
+      "pass_rate": 0.833,
+      "passed": 5,
+      "total": 6
+    },
+    {
+      "configuration": "without_skill",
+      "eval_name": "review-cart-files",
+      "pass_rate": 0.833,
+      "passed": 5,
+      "total": 6
+    }
+  ],
+  "aggregate": {
+    "with_skill": {
+      "total_passed": 18,
+      "total_assertions": 19,
+      "pass_rate": 0.947
+    },
+    "without_skill": {
+      "total_passed": 15,
+      "total_assertions": 19,
+      "pass_rate": 0.789
+    },
+    "delta": 0.158
+  },
+  "analyst_observations": [
+    "The key discriminating assertions are review-checklist (with-skill always produces a §11 checklist table; baseline never does) and review-uses-severity-groups (with-skill uses strict HIGH/MEDIUM/LOW; baseline free-forms severity labels).",
+    "The findings-identify-networkidle assertion failed for BOTH configurations — because the reviewed files (cart.spec.ts, cart.page.ts) genuinely don't contain networkidle. This assertion is non-discriminating and should be removed or rewritten to test whether the reviewer examines BasePage as context.",
+    "Eval 2 (review-only) shows equal scores (5/6) for both configurations — suggesting that for pure review tasks without standards generation, the skill adds less marginal value. The main win is consistent structure (HIGH/MEDIUM/LOW labels and file:line format).",
+    "The biggest win is Eval 0 (6/6 vs 4/6): the skill enforces the combined generate+review workflow with cross-referencing, which the baseline doesn't do unprompted.",
+    "The baseline's Eval 1 output had 17 sections (more comprehensive in breadth) but lacked a review checklist. The skill-guided output had 11 sections + an appendix but always produced the checklist — a clearer deliverable for a code reviewer."
+  ]
+}

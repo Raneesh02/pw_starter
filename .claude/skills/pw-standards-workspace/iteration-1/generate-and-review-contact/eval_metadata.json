@@ -1,0 +1,31 @@
+{
+  "eval_id": 0,
+  "eval_name": "generate-and-review-contact",
+  "prompt": "As a code reviewer, generate the test automation coding standards for this Playwright project and then review the contact tests (tests/contact/contact.spec.ts) against those standards.",
+  "assertions": [
+    {
+      "name": "standards-file-created",
+      "description": "TEST_AUTOMATION_STANDARDS.md is produced in the outputs"
+    },
+    {
+      "name": "standards-has-review-checklist",
+      "description": "Standards document includes a Code Review Checklist section"
+    },
+    {
+      "name": "standards-covers-all-layers",
+      "description": "Standards doc covers page objects, fixtures, assertions, waits, and test data"
+    },
+    {
+      "name": "review-findings-produced",
+      "description": "A review findings report is produced for contact.spec.ts"
+    },
+    {
+      "name": "review-uses-severity-groups",
+      "description": "Review findings are grouped by HIGH / MEDIUM / LOW severity"
+    },
+    {
+      "name": "review-cross-references-standards",
+      "description": "Review findings reference the standards document sections or rules"
+    }
+  ]
+}

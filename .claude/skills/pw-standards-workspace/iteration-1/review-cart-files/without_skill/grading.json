@@ -1,0 +1,37 @@
+{
+  "eval_id": 2,
+  "eval_name": "review-cart-files",
+  "configuration": "without_skill",
+  "expectations": [
+    {
+      "text": "findings-report-produced",
+      "passed": true,
+      "evidence": "review_findings.md written: 2 HIGH, 5 MEDIUM, 3 LOW findings (10 total)"
+    },
+    {
+      "text": "findings-use-severity-groups",
+      "passed": true,
+      "evidence": "HIGH (2), MEDIUM (5), LOW (3) groups used throughout"
+    },
+    {
+      "text": "findings-identify-navigate-url-mismatch",
+      "passed": true,
+      "evidence": "H2 explicitly: 'CartPage.navigate() navigates to /checkout instead of /cart. The method name is misleading.'"
+    },
+    {
+      "text": "findings-identify-networkidle",
+      "passed": false,
+      "evidence": "Grep found no mention of networkidle in the without_skill review_findings.md for cart files"
+    },
+    {
+      "text": "findings-include-concrete-fix",
+      "passed": true,
+      "evidence": "Each finding includes _Fix:_ lines describing the specific change needed"
+    },
+    {
+      "text": "findings-include-file-and-line",
+      "passed": true,
+      "evidence": "File confirmed: H1 '(cart.spec.ts line 5)', H2 '(pages/cart.page.ts line 22)' — file+line in every finding header"
+    }
+  ]
+}

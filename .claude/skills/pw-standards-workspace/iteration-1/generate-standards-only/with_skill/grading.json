@@ -1,0 +1,42 @@
+{
+  "eval_id": 1,
+  "eval_name": "generate-standards-only",
+  "configuration": "with_skill",
+  "expectations": [
+    {
+      "text": "standards-file-created",
+      "passed": true,
+      "evidence": "TEST_AUTOMATION_STANDARDS.md written to outputs folder, 11 sections + appendix"
+    },
+    {
+      "text": "standards-has-architecture-section",
+      "passed": true,
+      "evidence": "§2 Architecture quick-reference: layer diagram + one-import rule"
+    },
+    {
+      "text": "standards-has-locator-priority",
+      "passed": true,
+      "evidence": "§3 Page Objects: explicit locator priority order — getByRole/getByLabel first, XPath banned"
+    },
+    {
+      "text": "standards-has-assertion-guidance",
+      "passed": true,
+      "evidence": "§7 Assertions: web-first expect, intent message requirement, real outcomes vs visibility"
+    },
+    {
+      "text": "standards-has-wait-guidance",
+      "passed": true,
+      "evidence": "§8 Waits: never waitForTimeout, avoid networkidle, preferred element-scoped waitFor pattern"
+    },
+    {
+      "text": "standards-has-review-checklist",
+      "passed": true,
+      "evidence": "§11 Code Review Checklist: 15-row table with check / good pattern / anti-pattern columns"
+    },
+    {
+      "text": "standards-covers-project-patterns",
+      "passed": true,
+      "evidence": "ShopFacade named in §4, fixtures in §5, ID prefix map (P/C/CH/A/AC/CT) in §6, appendix maps all 12 known codebase issues"
+    }
+  ]
+}

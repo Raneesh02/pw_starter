@@ -1,0 +1,42 @@
+{
+  "eval_id": 1,
+  "eval_name": "generate-standards-only",
+  "configuration": "without_skill",
+  "expectations": [
+    {
+      "text": "standards-file-created",
+      "passed": true,
+      "evidence": "17-section TEST_AUTOMATION_STANDARDS.md produced"
+    },
+    {
+      "text": "standards-has-architecture-section",
+      "passed": true,
+      "evidence": "§2 Directory Structure explains where files live and why"
+    },
+    {
+      "text": "standards-has-locator-priority",
+      "passed": true,
+      "evidence": "§6 Locator Strategy: semantic role first, XPath and position-based prohibited"
+    },
+    {
+      "text": "standards-has-assertion-guidance",
+      "passed": true,
+      "evidence": "§9 Assertions covers web-first expect, required intent messages, asserting outcomes"
+    },
+    {
+      "text": "standards-has-wait-guidance",
+      "passed": true,
+      "evidence": "§10 Waiting and Synchronisation: waitForTimeout prohibited, networkidle to be replaced"
+    },
+    {
+      "text": "standards-has-review-checklist",
+      "passed": false,
+      "evidence": "17 sections present but none is titled 'Code Review Checklist'. §17 is 'Anti-Patterns Reference' — useful but not a structured per-item checklist."
+    },
+    {
+      "text": "standards-covers-project-patterns",
+      "passed": true,
+      "evidence": "§8 ShopFacade, §3 Fixtures/imports, §4 Naming conventions with prefix map all present"
+    }
+  ]
+}

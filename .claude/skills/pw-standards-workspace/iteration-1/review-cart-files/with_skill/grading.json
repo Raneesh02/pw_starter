@@ -1,0 +1,37 @@
+{
+  "eval_id": 2,
+  "eval_name": "review-cart-files",
+  "configuration": "with_skill",
+  "expectations": [
+    {
+      "text": "findings-report-produced",
+      "passed": true,
+      "evidence": "review_findings.md written: 1 HIGH, 7 MEDIUM, 3 LOW findings"
+    },
+    {
+      "text": "findings-use-severity-groups",
+      "passed": true,
+      "evidence": "[HIGH], [MEDIUM], [LOW] labels on every finding; structured sections"
+    },
+    {
+      "text": "findings-identify-navigate-url-mismatch",
+      "passed": true,
+      "evidence": "MEDIUM finding at cart.spec.ts:21-22 references 'existing navigate() which goes to /checkout' and recommends navigateToCart()"
+    },
+    {
+      "text": "findings-identify-networkidle",
+      "passed": false,
+      "evidence": "networkidle listed as PASS in summary checklist ('No networkidle | PASS') — correct for cart.page.ts itself, but BasePage (which cart inherits) and ShopFacade both use it. Not flagged as a finding."
+    },
+    {
+      "text": "findings-include-concrete-fix",
+      "passed": true,
+      "evidence": "Every finding includes explicit Fix: line with code example or clear action"
+    },
+    {
+      "text": "findings-include-file-and-line",
+      "passed": true,
+      "evidence": "All findings include file:line — e.g., 'pages/cart.page.ts:33', 'cart.spec.ts:12', 'cart.spec.ts:50'"
+    }
+  ]
+}

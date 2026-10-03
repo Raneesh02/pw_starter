@@ -1,0 +1,31 @@
+{
+  "eval_id": 2,
+  "eval_name": "review-cart-files",
+  "prompt": "Review tests/cart/cart.spec.ts and pages/cart.page.ts for Playwright best practices and report any issues.",
+  "assertions": [
+    {
+      "name": "findings-report-produced",
+      "description": "A review_findings.md report is written to the outputs directory"
+    },
+    {
+      "name": "findings-use-severity-groups",
+      "description": "Findings are grouped by HIGH / MEDIUM / LOW severity"
+    },
+    {
+      "name": "findings-identify-navigate-url-mismatch",
+      "description": "Report flags CartPage.navigate() routing to /checkout instead of /cart"
+    },
+    {
+      "name": "findings-identify-networkidle",
+      "description": "Report flags networkidle usage in cart-related code (BasePage or ShopFacade)"
+    },
+    {
+      "name": "findings-include-concrete-fix",
+      "description": "Each finding includes a concrete fix suggestion, not just a description of the problem"
+    },
+    {
+      "name": "findings-include-file-and-line",
+      "description": "Each finding references the file and approximate line number"
+    }
+  ]
+}

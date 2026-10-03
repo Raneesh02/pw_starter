@@ -1,0 +1,37 @@
+{
+  "eval_id": 0,
+  "eval_name": "generate-and-review-contact",
+  "configuration": "without_skill",
+  "expectations": [
+    {
+      "text": "standards-file-created",
+      "passed": true,
+      "evidence": "13-section TEST_AUTOMATION_STANDARDS.md produced covering project-specific conventions"
+    },
+    {
+      "text": "standards-has-review-checklist",
+      "passed": false,
+      "evidence": "13 sections present but none is a dedicated code-review checklist. Sections end at §13 TypeScript — no checklist table."
+    },
+    {
+      "text": "standards-covers-all-layers",
+      "passed": true,
+      "evidence": "§4 page-object rules, §5 ShopFacade, §6 assertions, §7 waits, §9 test data, §12 navigation all covered"
+    },
+    {
+      "text": "review-findings-produced",
+      "passed": true,
+      "evidence": "review_findings.md written with 5 findings"
+    },
+    {
+      "text": "review-uses-severity-groups",
+      "passed": false,
+      "evidence": "Uses 'Moderate', 'Minor', 'Informational', 'Style' labels — not the HIGH/MEDIUM/LOW grouping defined in the skill"
+    },
+    {
+      "text": "review-cross-references-standards",
+      "passed": true,
+      "evidence": "Each finding cites standard sections: '§4.1', '§6.3', '§4.2', '§12', '§2'"
+    }
+  ]
+}
