@@ -1,4 +1,4 @@
-name: AI Review
+name: PR AI Review (pr-code-review skill)
 
 on:
   issue_comment:
@@ -8,10 +8,9 @@ permissions:
   contents: read
   pull-requests: write
   statuses: write
-  id-token: write
 
 jobs:
-  ai-review:
+  pr-ai-review:
     if: >-
       github.event.issue.pull_request &&
       github.event.comment.body == 'ai_review' &&
@@ -27,80 +26,59 @@ jobs:
 
       - name: Get PR head SHA
         id: pr
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
-      - name: Verify static-checks passed
-        id: gate
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          state=$(gh api repos/${{ github.repository }}/commits/${{ steps.pr.outputs.sha }}/statuses \
-            --jq '[.[] | select(.context == "static-checks")] | first | .state // "not started"')
-          echo "state=$state" >> "$GITHUB_OUTPUT"
-          if [ "$state" != "success" ]; then
-            gh pr comment ${{ github.event.issue.number }} --repo ${{ github.repository }} \
-              --body "AI review skipped: required **static-checks** status is \`$state\`. Comment \`static_check\`, fix any failures, then comment \`ai_review\` again."
-          fi
-
       - name: Set pending status
-        if: steps.gate.outputs.state == 'success'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh api repos/${{ github.repository }}/statuses/${{ steps.pr.outputs.sha }} \
-            -f state=pending -f context="ai-review" \
+            -f state=pending -f context="pr-ai-review" \
             -f target_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
       - name: Set up Node.js
-        if: steps.gate.outputs.state == 'success'
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
 
       - name: Install Dependencies
-        if: steps.gate.outputs.state == 'success'
-        run: |
-          npm ci
-          npx playwright install --with-deps chromium
+        run: npm ci
 
       - name: Run Claude review
-        if: steps.gate.outputs.state == 'success'
         uses: anthropics/claude-code-action@v1
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ github.token }}
           prompt: |
             REPO: ${{ github.repository }}
             PR NUMBER: ${{ github.event.issue.number }}
 
-            Follow the workflow in .claude/skills/pw-code-review/SKILL.md against this PR
-            (diff: `git diff origin/main...HEAD`). Read agent-context/CODING_GUIDELINES.md first.
+            Follow the workflow in .claude/skills/pr-code-review/SKILL.md to review this PR
+            (diff: `git diff origin/main...HEAD`). Read CODE_REVIEW_GUIDELINES.md first, in full.
             Report only; never edit files, commit, or push.
 
-            Do NOT post anything to GitHub. Write the review to ./review.json (Write tool) as:
+            Do NOT post anything to GitHub. Write the review to ./review.json (Write tool), using
+            the skill's checklist and severities, but in this exact JSON shape instead of its usual
+            markdown output:
             {"summary": "<markdown>", "comments": [{"path": "<file>", "line": <int>, "severity": "Blocker|Major|Minor|Suggestion", "section": "§N or —", "body": "<issue — fix>"}]}
 
             Rules:
             - One entry in "comments" per finding that maps to a specific line. "line" must be a line
               added or changed in the PR head (right side of the diff), 1-indexed in the new file.
-            - Findings with no single line (cross-file, coverage gaps) go in "summary", not "comments".
+            - Findings with no single line (risk triage, coverage gaps, cross-file issues) go in
+              "summary", not "comments".
             - "summary" markdown format:
               ## Summary
               Overall Risk: Low | Medium | High
               ## Human Review Required
               **Required:** Yes/No — **Level:** Low/Medium/High — **Reason:** ...
-              (High: auth, payments, security, core config; Medium: complex page workflows; Low: routine specs.)
               End with:
-              reviewers: pw-guideline-reviewer, pw-investigative-reviewer
-              tests: <n> passed / <n> failed
+              checklist: CODE_REVIEW_GUIDELINES.md
           claude_args: >-
-            --allowedTools "Agent,Task,Read,Grep,Glob,Bash(git diff:*),Bash(git status:*),Bash(git log:*),Bash(npx playwright test:*),Write"
+            --allowedTools "Read,Grep,Glob,Bash(git diff:*),Bash(git status:*),Bash(git log:*),Write"
 
       - name: Post inline review
-        if: steps.gate.outputs.state == 'success'
         env:
           GH_TOKEN: ${{ github.token }}
           SHA: ${{ steps.pr.outputs.sha }}
@@ -123,10 +101,10 @@ jobs:
           fi
 
       - name: Report final status
-        if: always() && steps.gate.outputs.state == 'success'
+        if: always()
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh api repos/${{ github.repository }}/statuses/${{ steps.pr.outputs.sha }} \
-            -f state=${{ job.status == 'success' && 'success' || 'failure' }} -f context="ai-review" \
+            -f state=${{ job.status == 'success' && 'success' || 'failure' }} -f context="pr-ai-review" \
             -f target_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
