@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Demo AI Chat</title>
+  <style>
+    body { font-family: sans-serif; max-width: 640px; margin: 2rem auto; }
+    #messages { list-style: none; padding: 0; min-height: 200px; border: 1px solid #ccc; padding: 8px; }
+    .user { text-align: right; color: #0645ad; }
+    .assistant { color: #222; white-space: pre-wrap; }
+    #error { color: #b00020; }
+  </style>
+</head>
+<body>
+  <h1>Support Chat</h1>
+  <ul id="messages" aria-live="polite" aria-label="Conversation"></ul>
+  <p id="typing" data-test="typing-indicator" hidden>Assistant is typing…</p>
+  <div id="error" role="alert" hidden>
+    Something went wrong. <button id="retry" type="button">Retry</button>
+  </div>
+  <form id="chat-form">
+    <textarea id="input" aria-label="Message" maxlength="500" rows="3"></textarea>
+    <span id="counter" data-test="char-counter">0/500</span>
+    <button id="send" type="submit" disabled>Send</button>
+    <button id="clear" type="button">New chat</button>
+  </form>
+
+  <script>
+    const messagesEl = document.getElementById('messages');
+    const input = document.getElementById('input');
+    const send = document.getElementById('send');
+    const counter = document.getElementById('counter');
+    const typing = document.getElementById('typing');
+    const errorEl = document.getElementById('error');
+    let history = [];
+    let lastUserText = '';
+
+    function addMessage(role, text) {
+      const li = document.createElement('li');
+      li.className = role;
+      li.dataset.test = role + '-message';
+      li.textContent = text; // never innerHTML: model output is untrusted
+      messagesEl.appendChild(li);
+    }
+
+    function refreshSendState() {
+      counter.textContent = input.value.length + '/500';
+      send.disabled = input.disabled || input.value.trim().length === 0;
+    }
+
+    function setBusy(busy) {
+      input.disabled = busy;
+      typing.hidden = !busy;
+      refreshSendState();
+    }
+
+    async function ask(text) {
+      errorEl.hidden = true;
+      setBusy(true);
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text, history }),
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        addMessage('assistant', data.reply);
+        history.push({ role: 'user', content: text }, { role: 'assistant', content: data.reply });
+      } catch (e) {
+        errorEl.hidden = false;
+      } finally {
+        setBusy(false);
+        input.focus();
+      }
+    }
+
+    document.getElementById('chat-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const text = input.value.trim();
+      if (!text) return;
+      lastUserText = text;
+      addMessage('user', text);
+      input.value = '';
+      ask(text);
+    });
+
+    input.addEventListener('input', refreshSendState);
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        document.getElementById('chat-form').requestSubmit();
+      }
+    });
+
+    document.getElementById('retry').addEventListener('click', () => ask(lastUserText));
+
+    document.getElementById('clear').addEventListener('click', () => {
+      messagesEl.innerHTML = '';
+      history = [];
+      errorEl.hidden = true;
+    });
+  </script>
+</body>
+</html>

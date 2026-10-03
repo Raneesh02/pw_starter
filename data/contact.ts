@@ -1,0 +1,42 @@
+export const CONTACT = {
+  valid: {
+    firstName: 'Rucha',
+    lastName: 'Tester',
+    email: 'rucha.tester@example.com',
+    subject: 'customer-service',
+    message: 'Hello team, I would like to know more about the delivery time for hand tools orders.',
+  },
+  subjects: [
+    { value: 'customer-service', label: 'Customer service' },
+    { value: 'webmaster', label: 'Webmaster' },
+    { value: 'return', label: 'Return' },
+    { value: 'payments', label: 'Payments' },
+    { value: 'warranty', label: 'Warranty' },
+    { value: 'status-of-order', label: 'Status of my order' },
+  ],
+  invalidEmails: ['plainaddress', 'missing-at.example.com', 'user@'],
+  shortMessage: 'Too short',
+  minMessageLength: 50,
+  errors: {
+    firstName: 'First name is required',
+    lastName: 'Last name is required',
+    email: 'Email is required',
+    emailInvalid: 'Email format is invalid',
+    subject: 'Subject is required',
+    message: 'Message is required',
+    messageShort: 'Message must be minimal 50 characters',
+    attachment: 'File should be empty.',
+  },
+  successMessage: 'Thanks for your message! We will contact you shortly.',
+  subjectPlaceholder: 'Select a subject *',
+  whitespace: '   ',
+  apiPath: '/messages',
+  files: {
+    nonEmptyTxt: { name: 'note.txt', mimeType: 'text/plain', buffer: Buffer.from('some content') },
+    png: { name: 'picture.png', mimeType: 'image/png', buffer: Buffer.from('not really an image') },
+  },
+  specialChars: {
+    firstName: `<img src=x onerror=alert(1)>`,
+    message: `<script>alert(1)</script> Special characters & symbols: "quotes" 'apostrophes' 100% ok`,
+  },
+};
