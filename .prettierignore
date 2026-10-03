@@ -1,7 +1,4 @@
-node_modules
-test-results
-playwright-report
-auth.json
-package-lock.json
-*.md
-.claude
+node_modules/
+dist/
+playwright-report/
+test-results/

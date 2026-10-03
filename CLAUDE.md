@@ -2,47 +2,50 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## What this is
+## Project
 
-Playwright + TypeScript test framework for the demo shop https://practicesoftwaretesting.com (a workshop starter repo). Tests run against the live demo site — there is no local app to start.
+Playwright + TypeScript E2E test suite for the demo shop https://practicesoftwaretesting.com. Starter repo for the Claude Code Workshop.
+
+See [CODING_GUIDELINES.md](CODING_GUIDELINES.md) for naming, style, and lint/format rules.
 
 ## Commands
 
 ```bash
-npm install && npx playwright install chromium   # one-time setup
-npx tsc --noEmit                                  # typecheck (no build step exists otherwise)
-npm run lint                                      # ESLint (lint:fix to autofix)
-npm run format:check                              # Prettier check (npm run format to write)
+npm install
+npx playwright install chromium   # first-time browser install
 
-npx playwright test                               # run full suite
-npx playwright test tests/cart/cart.spec.ts       # run one file
-npx playwright test --grep "C01"                  # run one test by its ID (e.g. C01, CH03, P05)
-npx playwright test --grep "@regression"          # run by tag
-npm run test:headed                               # headed mode
-npm run test:ui                                   # Playwright UI mode
-npm run test:report                               # open last HTML report
+npx tsc --noEmit                  # type-check (run after any TS change)
+
+npx playwright test                           # run full suite
+npx playwright test tests/cart/cart.spec.ts   # run one file
+npx playwright test --grep "C01"              # run one test by its ID (test names are prefixed C01, P01, CH01, etc.)
+npx playwright test --grep "@regression"      # run tests by tag
+
+npm run test:headed                           # run with browser visible
+npm run test:ui                                # Playwright UI mode
+npm run test:report                            # open last HTML report
+npm run setup                                   # run tests/auth.setup.ts to generate auth.json
 ```
 
-Note: `npm test` only runs the `C01` test in headed mode — it is a quick smoke check, not the suite.
+`npm test` only runs the `C01` test in headed mode — it is a smoke command, not the full-suite runner.
 
-ESLint (`eslint.config.mjs`, flat config with `typescript-eslint` + `eslint-plugin-playwright`) and Prettier (`.prettierrc`: single quotes, semicolons, trailing commas, 100 cols) enforce `agent-context/CODING_GUIDELINES.md`. Rules with existing violations (`no-nth-methods`, `no-networkidle`, raw `page.*`/`locator()` in specs, test-title format) are set to `warn`; new code should not add to them.
+## MCP
+
+The Playwright MCP server is configured in `.mcp.json` (project scope, `npx @playwright/mcp@latest`). Use its browser tools (`browser_navigate`, `browser_snapshot`, `browser_click`, etc.) to inspect real app behavior — actual `data-test` attributes, locators, DOM changes — before writing or fixing assertions, instead of guessing.
 
 ## Architecture
 
-- **`pages/`** — Page Object Model classes (`HomePage`, `ProductPage`, `CartPage`, `CheckoutPage`). Each declares its own `Locator` fields in the constructor; only `BasePage` exists as a shared base (with `navigate()`), but the concrete page classes above do not currently extend it.
-- **`common_actions/shop.facade.ts`** — `ShopFacade`, a facade over multiple page objects for multi-step flows spanning pages (e.g. `addToCartAndGoToCheckout`, `fullGuestCheckout`). Add new cross-page flows here rather than duplicating navigation logic inside spec files.
-- **`fixtures/index.ts`** — custom Playwright `test`/`expect`, extending base `test` with fixtures for each page object plus `shopFacade`. Specs import `test`/`expect` from `../../fixtures`, not from `@playwright/test` directly.
-- **`data/`** — static test data (`users.ts`, `products.ts`) imported by specs; keep new fixtures/test data here rather than inlined in specs.
-- **`utils/helpers.ts`** — standalone helper functions duplicating some facade/page logic; not currently imported by any spec. Prefer the fixtures/facade pattern for new tests over adding to this file.
-- **`tests/auth.setup.ts`** — Playwright setup project that logs in via UI and saves storage state to `auth.json` (gitignored); run via `npm run setup`. Note: no project in `playwright.config.ts` currently depends on this setup or consumes `auth.json` as `storageState`.
-- Test IDs are prefixed by feature area and are how tests are usually targeted with `--grep`: `P` (product), `C` (cart), `CH` (checkout). Tests are also tagged `@regression`.
-- **`.claude/skills/pw-test-writer/`** — project skill that generates new Playwright specs (plus supporting page-object/facade/data changes) matching this repo's conventions; triggered by `/pw-test-writer` or natural-language "write/add a test for..." requests.
-- **`.claude/skills/pw-code-review/`** — project skill that reviews changes (git diff by default) against `agent-context/CODING_GUIDELINES.md` plus investigative coverage checks; runs affected tests only (no lint/tsc/format checks), report-only. Triggered by `/pw-code-review` or "review my changes/spec" requests. Dispatches two read-only sub-agents in parallel (`.claude/agents/pw-guideline-reviewer.md`, `.claude/agents/pw-investigative-reviewer.md`) for the guideline and investigative passes, then merges their findings.
-- **`.claude/agents/`** — custom agent definitions (`tools:`-restricted via frontmatter) used by skills; currently `pw-guideline-reviewer` and `pw-investigative-reviewer`, both read-only (`Read, Grep, Glob`).
+- **`fixtures/index.ts`** is the entry point for every spec: it extends Playwright's `test` with auto-injected fixtures — `homePage`, `cartPage`, `checkoutPage`, `productPage`, `shopFacade` — and re-exports `expect`. Specs import `{ expect, test }` from `../../fixtures`, never directly from `@playwright/test`.
+- **`pages/`** — Page Object Model. Each page class (`home.page.ts`, `cart.page.ts`, `checkout.page.ts`, `product.page.ts`) holds only locators and low-level actions for that page. `base.page.ts` provides a shared `navigate()`. Locators prefer role-based queries (`getByRole`, `getByLabel`) with `[data-test="..."]` as fallback for elements without accessible roles.
+- **`common_actions/shop.facade.ts`** — `ShopFacade` composes page objects into cross-page workflows reused across spec files (e.g. `addToCart`, `addToCartAndGoToCheckout`, `fullGuestCheckout`). Use this facade for multi-step setup in `beforeEach` rather than duplicating flows in specs.
+- **`data/`** — test data (`products.ts`, `users.ts`) kept out of specs.
+- **`tests/`** — specs grouped by feature (`cart/`, `checkout/`, `product/`). Assertions live in specs; locators/actions live in page objects. `tests/auth.setup.ts` logs in via UI and saves `auth.json` storage state for authenticated runs.
+- **`utils/helpers.ts`** — standalone helper functions (currently overlapping with `ShopFacade`/`auth.setup.ts`; prefer the facade and fixtures for new tests).
 
-- **`.github/workflows/ai-review.yml`** — PR comment `ai_review` (collaborators only) runs `anthropics/claude-code-action` with the `pw-code-review` skill and posts one PR review with inline per-line comments (agent writes `review.json`, a workflow step posts it, falling back to a summary-only review on a 422); gated on the `static-checks` commit status (comment `static_check` first) and sets an `ai-review` status. Requires the `CLAUDE_CODE_OAUTH_TOKEN` repo secret (generate with `claude setup-token`).
+## Conventions
 
-## References
-
-- **`agent-context/CODING_GUIDELINES.md`** — coding standards for SDETs (layering, naming, locators, assertions, test design, review checklist). Follow it for all new code.
-- **`agent-context/reference.md`** — guidance for writing parameterized (data-driven) test cases.
+- Locators: prefer user-facing queries (`getByRole`, `getByLabel`, `getByText`) over CSS/XPath.
+- Assertions: use web-first assertions (`await expect(locator)...`); no fixed waits (`waitForTimeout`).
+- Tests are independent — state is set up via `shopFacade`/fixtures in `beforeEach`, not by depending on other tests.
+- Test IDs (`C01`, `P01`, `CH01`, ...) plus `@regression` tag are used for targeted runs via `--grep`.
+- Parameterized tests: not yet used in this repo — see [reference/reference.md](reference/reference.md) for the `for...of` loop pattern to follow when adding them.

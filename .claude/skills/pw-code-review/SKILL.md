@@ -16,6 +16,7 @@ Review changes against the repo's standards. The standards live only in `agent-c
    - `pw-investigative-reviewer` — probes beyond the written rules: missing boundary/negative/empty-input cases, tests that cannot fail, order-dependence or shared-state risk on the live site, unstated assumptions, assertions on implementation detail.
 
    Both are read-only by tool restriction (`Read, Grep, Glob` only) — they cannot edit code, run commands, or commit.
+
 4. **Merge.** Combine both agents' findings into one list; dedupe near-identical findings reported by both, keeping each one's original `file:line — §N/— — issue — fix` format.
 5. **Run checks (read-only).** Only the affected specs (`npx playwright test <file>` or `--grep "<ID>"`). Never the full suite. Never edit code.
 6. **Report.**

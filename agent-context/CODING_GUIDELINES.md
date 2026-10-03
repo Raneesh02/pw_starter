@@ -64,7 +64,7 @@ readonly addToCartButton = page.locator('div > div:nth-child(3) button.btn');
 
 ## 8. Comments
 
-- Comments explain *why*, not *what*. No commented-out code.
+- Comments explain _why_, not _what_. No commented-out code.
 
 ## 9. Secrets & config
 
