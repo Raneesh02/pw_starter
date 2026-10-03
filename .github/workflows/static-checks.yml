@@ -10,7 +10,7 @@ permissions:
   statuses: write
 
 jobs:
-  static-checks-new:
+  static-checks:
     if: >-
       github.event.issue.pull_request &&
       github.event.comment.body == 'static_check' &&
