@@ -1,0 +1,36 @@
+name: AI Review
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  ai-review:
+    name: Playwright AI Review
+    runs-on: ubuntu-latest
+    if: |
+      github.event.issue.pull_request != null &&
+      contains(github.event.comment.body, 'ai_review')
+
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run AI review with pw-review-refactor skill
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          trigger_phrase: "ai_review"
+          prompt: |
+            You are reviewing a Playwright + TypeScript test suite.
+            Run the /pw-review-refactor skill against the changed files in this PR.
+            Use the skill's checklist to find issues, then post your findings as
+            inline PR review comments using /code-review --comment.
+            Group findings HIGH → MEDIUM → LOW as the skill specifies.
+            For each finding include: file + line, rule broken, one-line concrete fix.
