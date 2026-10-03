@@ -14,7 +14,8 @@ export const CONTACT = {
     lastName: 'Doe',
     email: 'john.doe@example.com',
     subject: 'return',
-    message: 'This is a valid message with enough characters to pass the minimum length validation.',
+    message:
+      'This is a valid message with enough characters to pass the minimum length validation.',
   },
   invalidEmail: 'not-an-email',
   shortMessage: 'Too short',

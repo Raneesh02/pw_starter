@@ -64,7 +64,7 @@ of the spec is acceptable, but shared/reusable cases belong in `data/`.
 
 ## Locators and assertions stay page-object based
 
-Parameterization only changes *what values* are passed in — it doesn't
+Parameterization only changes _what values_ are passed in — it doesn't
 change where locators or actions live. Keep using page object methods
 (`homePage.sortBy(...)`, `shopFacade.addToCart(...)`, etc.) inside the loop
 body; don't inline CSS/XPath selectors into the data file.

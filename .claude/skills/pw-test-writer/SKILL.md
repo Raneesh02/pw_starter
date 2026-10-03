@@ -8,6 +8,7 @@ description: Generates new Playwright test spec files (and any needed page-objec
 Generate a new Playwright spec (or extend an existing one) for pw_starter, matching repo conventions exactly.
 
 Before writing code, read:
+
 - `references/conventions.md` (in this skill dir) — fixtures/POM/facade/data/spec/ID rules with worked snippets
 - `references/checklist.md` (in this skill dir) — pre-flight/post-flight checklist
 - `agent-context/reference.md` — only if this task is parameterized/data-driven

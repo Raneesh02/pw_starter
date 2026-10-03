@@ -53,7 +53,6 @@ test.describe('Product', () => {
     page,
   }) => {
     await homePage.searchFor(PRODUCTS.search.validKeyword);
-    await page.waitForLoadState('networkidle');
     await page.locator('[class="card skeleton"]').first().waitFor({ state: 'hidden' });
     await homePage.getProductCardNames().first().click();
     const itemName = ((await productPage.productName.textContent()) ?? '').trim();

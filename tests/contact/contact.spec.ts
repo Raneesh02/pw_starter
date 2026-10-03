@@ -6,7 +6,9 @@ test.describe('Contact', () => {
     await contactPage.navigate();
   });
 
-  test('CT01 submitting empty form shows required field errors @regression', async ({ contactPage }) => {
+  test('CT01 submitting empty form shows required field errors @regression', async ({
+    contactPage,
+  }) => {
     await contactPage.submit();
     await expect(contactPage.firstNameError).toHaveText('First name is required');
     await expect(contactPage.lastNameError).toHaveText('Last name is required');
@@ -15,25 +17,33 @@ test.describe('Contact', () => {
     await expect(contactPage.messageError).toHaveText('Message is required');
   });
 
-  test('CT02 invalid email format shows email format error @regression', async ({ contactPage }) => {
+  test('CT02 invalid email format shows email format error @regression', async ({
+    contactPage,
+  }) => {
     await contactPage.fillForm({ ...CONTACT.valid, email: CONTACT.invalidEmail });
     await contactPage.submit();
     await expect(contactPage.emailError).toHaveText('Email format is invalid');
   });
 
-  test('CT03 message under minimum length shows length error @regression', async ({ contactPage }) => {
+  test('CT03 message under minimum length shows length error @regression', async ({
+    contactPage,
+  }) => {
     await contactPage.fillForm({ ...CONTACT.valid, message: CONTACT.shortMessage });
     await contactPage.submit();
     await expect(contactPage.messageError).toHaveText('Message must be minimal 50 characters');
   });
 
-  test('CT04 valid submission shows thank you confirmation @regression', async ({ contactPage }) => {
+  test('CT04 valid submission shows thank you confirmation @regression', async ({
+    contactPage,
+  }) => {
     await contactPage.fillForm(CONTACT.valid);
     await contactPage.submit();
     await expect(contactPage.successAlert).toBeVisible();
   });
 
-  test('CT05 valid submission replaces the form with the confirmation @regression', async ({ contactPage }) => {
+  test('CT05 valid submission replaces the form with the confirmation @regression', async ({
+    contactPage,
+  }) => {
     await contactPage.fillForm(CONTACT.valid);
     await contactPage.submit();
     await expect(contactPage.successAlert).toBeVisible();

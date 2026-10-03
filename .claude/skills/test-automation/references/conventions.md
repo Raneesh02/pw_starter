@@ -26,6 +26,7 @@ Specs must import from `../../fixtures`, never `@playwright/test` directly.
 ## Page objects — `pages/`
 
 One class per page (`home.page.ts`, `cart.page.ts`, `checkout.page.ts`, `product.page.ts`, `contact.page.ts`). Each class holds **only**:
+
 - readonly `Locator` properties, built in the constructor
 - low-level action methods (e.g. `fillForm`, `submit`, `searchFor`)
 
@@ -47,8 +48,12 @@ export class ContactPage {
     this.successAlert = page.getByText('Thanks for your message! We will contact you shortly.');
   }
 
-  async fillForm(data: ContactFormData) { /* ... */ }
-  async submit() { await this.submitButton.click(); }
+  async fillForm(data: ContactFormData) {
+    /* ... */
+  }
+  async submit() {
+    await this.submitButton.click();
+  }
 }
 ```
 
@@ -62,8 +67,14 @@ Plain exported const objects, one per domain, kept out of specs: `PRODUCTS`, `US
 
 ```typescript
 export const CONTACT = {
-  subjects: { return: 'return', /* ... */ },
-  valid: { firstName: 'John', lastName: 'Doe', email: 'john.doe@example.com', subject: 'return', message: '...' },
+  subjects: { return: 'return' /* ... */ },
+  valid: {
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'john.doe@example.com',
+    subject: 'return',
+    message: '...',
+  },
   invalidEmail: 'not-an-email',
   shortMessage: 'Too short',
 };
@@ -75,12 +86,12 @@ One folder per feature (`tests/cart/`, `tests/checkout/`, `tests/product/`, `tes
 
 Test IDs currently in use (check the relevant spec file for the last number used before adding a new one — don't hardcode from memory):
 
-| Prefix | Feature   |
-|--------|-----------|
-| `C`    | Cart      |
-| `CH`   | Checkout  |
-| `CT`   | Contact   |
-| `P`    | Product   |
+| Prefix | Feature  |
+| ------ | -------- |
+| `C`    | Cart     |
+| `CH`   | Checkout |
+| `CT`   | Contact  |
+| `P`    | Product  |
 
 Every test title: `"<ID> <short description> @regression"`, e.g. `test('CT01 submitting empty form shows required field errors @regression', ...)`.
 
