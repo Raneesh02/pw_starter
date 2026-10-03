@@ -14,3 +14,6 @@ test-results/
 playwright-report/
 blob-report/
 .playwright-mcp/
+
+# Eval output
+evals/pw-code-review/results/

@@ -1,0 +1,12 @@
+diff --git a/tests/cart/cart.spec.ts b/tests/cart/cart.spec.ts
+index 1768181..f9d8216 100644
+--- a/tests/cart/cart.spec.ts
++++ b/tests/cart/cart.spec.ts
+@@ -27,6 +27,7 @@ test.describe('Cart', () => {
+     const input = cartPage.getItemQuantityInput(itemName);
+     await input.fill('3');
+     await input.press('Tab');
++    await cartPage.page.waitForTimeout(3000);
+     await expect(input).toHaveValue('3');
+   });
+ 

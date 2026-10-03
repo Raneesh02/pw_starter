@@ -1,0 +1,18 @@
+diff --git a/tests/cart/cart.spec.ts b/tests/cart/cart.spec.ts
+--- a/tests/cart/cart.spec.ts
++++ b/tests/cart/cart.spec.ts
+@@ -24,10 +24,10 @@ test.describe('Cart', () => {
+   });
+ 
+   test('C03 increase item quantity @regression', async ({ cartPage }) => {
+-    const input = cartPage.getItemQuantityInput(itemName);
+-    await input.fill('3');
+-    await input.press('Tab');
+-    await expect(input).toHaveValue('3');
++    const quantityInput = cartPage.getItemQuantityInput(itemName);
++    await quantityInput.fill('3');
++    await quantityInput.press('Tab');
++    await expect(quantityInput).toHaveValue('3');
+   });
+ 
+   for (const { id, qty } of QUANTITY_CASES) {

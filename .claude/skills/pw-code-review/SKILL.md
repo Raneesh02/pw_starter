@@ -1,6 +1,6 @@
 ---
 name: pw-code-review
-description: Full code review of pw_starter changes via three parallel subagents (pw-code-guidelines-reviewer, pw-architecture-reviewer, pw-security-reviewer) plus affected-test checks. Use whenever the user asks to review, code-review, or check their tests, spec, page object, facade, diff, branch, or PR in this repo — e.g. "review my changes", "review the cart spec", "is this ready for PR", or explicit invocation via /pw-code-review. Report-only; never edits code.
+description: Full code review of pw_starter changes via three parallel subagents (pw-code-guidelines-reviewer, pw-architecture-reviewer, pw-security-reviewer). Static review only (no test runs). Use whenever the user asks to review, code-review, or check their tests, spec, page object, facade, diff, branch, or PR in this repo — e.g. "review my changes", "review the cart spec", "is this ready for PR", or explicit invocation via /pw-code-review. Report-only; never edits code.
 ---
 
 # pw-code-review
@@ -30,24 +30,23 @@ of them.
    Don't summarize or pre-filter the scope for them beyond stating it — each one reads the
    actual files.
 
-3. **Run checks yourself, read-only**, while or after the subagents run: only the affected
-   spec(s) (`npx playwright test <file>` or `--grep "<ID>"`). Never the full suite. Never edit
-   code. Linting, type-checking and formatting are covered by the static-checks CI, not here.
+   Don't run tests, lint, type-checking or formatting — this is a static review only; tests
+   and static checks are covered by CI, not here.
 
-4. **Aggregate.** Collect all three reports. Drop duplicates (the same file:line/issue
+3. **Aggregate.** Collect all three reports. Drop duplicates (the same file:line/issue
    surfacing from more than one subagent — keep the one from the most relevant subagent:
    security wins over architecture, architecture wins over a plain style echo). Otherwise
    preserve each subagent's findings as given.
 
-5. **Report** (see format below).
+4. **Report** (see format below).
 
 ## Output format
 
 No preamble, no trailing summary. One combined list, grouped by severity across all three
 subagents (map each subagent's severity names onto these four):
 
-- **Blocker** — breaks a MUST-level guideline (`test.only`, secrets, test can't fail, failing
-  test); includes any subagent's Blocker/Critical
+- **Blocker** — breaks a MUST-level guideline (`test.only`, secrets, test can't fail);
+  includes any subagent's Blocker/Critical
 - **Major** — layering, locator priority, fixed waits, data isolation, real duplication, an
   inconsistent pattern, or a credential/gitignore gap that isn't outright Critical
 - **Minor** — naming, style, PII-like data, small structural inconsistency
@@ -58,12 +57,10 @@ Each finding: `file:line — §N — issue — fix`. Findings with no guideline 
 architecture/security ones) write `—` there. Tag which subagent raised it only if it's not
 obvious from the content.
 
-Immediately before the final tests line, add one line naming which subagents ran:
+End with one line naming which subagents ran:
 `reviewers: pw-code-guidelines-reviewer, pw-architecture-reviewer, pw-security-reviewer` —
-this is how a run (local or CI) is confirmed to have used them.
-
-End with one line: `tests: <n> passed / <n> failed`. If all three subagents found nothing,
-say so in one line.
+this is how a run (local or CI) is confirmed to have used them. If all three subagents found
+nothing, say so in one line.
 
 ## Rules
 

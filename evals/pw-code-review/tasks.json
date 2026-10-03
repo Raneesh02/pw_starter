@@ -1,0 +1,19 @@
+[
+  {
+    "id": "01-test-only",
+    "kind": "defect",
+    "keywords": ["test.only"],
+    "minSeverity": "Blocker",
+    "file": "tests/cart/cart.spec.ts",
+    "line": 26
+  },
+  {
+    "id": "02-wait-for-timeout",
+    "kind": "defect",
+    "keywords": ["waitForTimeout"],
+    "minSeverity": "Major",
+    "file": "tests/cart/cart.spec.ts",
+    "line": 30
+  },
+  { "id": "03-clean", "kind": "clean" }
+]

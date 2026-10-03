@@ -1,0 +1,13 @@
+diff --git a/tests/cart/cart.spec.ts b/tests/cart/cart.spec.ts
+index 1768181..bcc5822 100644
+--- a/tests/cart/cart.spec.ts
++++ b/tests/cart/cart.spec.ts
+@@ -23,7 +23,7 @@ test.describe('Cart', () => {
+     await expect(rows).toHaveCount(2);
+   });
+ 
+-  test('C03 increase item quantity @regression', async ({ cartPage }) => {
++  test.only('C03 increase item quantity @regression', async ({ cartPage }) => {
+     const input = cartPage.getItemQuantityInput(itemName);
+     await input.fill('3');
+     await input.press('Tab');
