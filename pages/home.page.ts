@@ -15,27 +15,29 @@ export class HomePage {
     this.searchButton = page.getByRole('button', { name: 'Search' });
     this.searchClearButton = page.getByRole('button', { name: 'X' });
     this.sortDropdown = page.getByRole('combobox', { name: 'sort' });
-    this.productCards = page.locator('[class*="card"]').filter({ has: page.getByRole('heading', { level: 5 }) });
+    this.productCards = page
+      .locator('[class*="card"]')
+      .filter({ has: page.getByRole('heading', { level: 5 }) });
   }
 
-  async navigate() {
+  async navigate(): Promise<void> {
     await this.page.goto('/');
   }
 
-  async searchFor(keyword: string) {
+  async searchFor(keyword: string): Promise<void> {
     await this.searchInput.fill(keyword);
     await this.searchButton.click();
   }
 
-  async filterByCategory(category: string) {
+  async filterByCategory(category: string): Promise<void> {
     await this.page.getByRole('checkbox', { name: category }).check();
   }
 
-  async sortBy(option: string) {
+  async sortBy(option: string): Promise<void> {
     await this.sortDropdown.selectOption(option);
   }
 
-  async clickProduct(name: string) {
+  async clickProduct(name: string): Promise<void> {
     await this.page.getByRole('heading', { name, level: 5 }).click();
   }
 
@@ -44,7 +46,11 @@ export class HomePage {
   }
 
   getCartBadge(): Locator {
-    return this.page.locator('app-header').getByRole('link', { name: 'cart' }).locator('generic').last();
+    return this.page
+      .locator('app-header')
+      .getByRole('link', { name: 'cart' })
+      .locator('generic')
+      .last();
   }
 
   getPaginationButton(label: string): Locator {
