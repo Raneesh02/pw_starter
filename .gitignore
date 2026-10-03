@@ -1,1 +1,16 @@
 node_modules/
+
+# Secrets
+.env
+
+# Playwright auth state
+auth.json
+*.auth.json
+admin-auth.json
+playwright/.auth/
+
+# Playwright output
+test-results/
+playwright-report/
+blob-report/
+.playwright-mcp/
