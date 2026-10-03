@@ -33,7 +33,8 @@ Go section by section through `CODING_GUIDELINES.md` against every changed file:
   search-wait pair instead of using the facade.
 - Test design (§6): independence, parameterization opportunities, tagging.
 - Stability (§7): no ad-hoc retries/timeouts added outside `playwright.config.ts`.
-- Style (§8): matches surrounding formatting; no stray `console.log`/`test.only`/dead code.
+- Comments (§8): comments explain why; no commented-out code. Also flag stray `console.log`/
+  `test.only` (no § for these — write `—`).
 - Secrets (§9): no new hardcoded credentials/tokens/API keys; `baseURL` not hard-coded.
 - Also grep `tests/` to confirm every new test ID is actually unique and correctly prefixed.
 
