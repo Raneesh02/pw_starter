@@ -1,5 +1,5 @@
 import { expect, test } from '../../fixtures';
-import { PRODUCTS } from '../../data/products';
+import { PRODUCTS, QUANTITY_CASES } from '../../data/products';
 
 test.describe('Cart', () => {
   let itemName = '';
@@ -30,14 +30,14 @@ test.describe('Cart', () => {
     await expect(input).toHaveValue('3');
   });
 
-  test('C04 decrease item quantity @regression', async ({ cartPage }) => {
-    const input = cartPage.getItemQuantityInput(itemName);
-    await input.fill('5');
-    await input.press('Tab');
-    await input.fill('2');
-    await input.press('Tab');
-    await expect(input).toHaveValue('2');
-  });
+  for (const { id, qty } of QUANTITY_CASES) {
+    test(`${id} set item quantity to ${qty} @regression`, async ({ cartPage }) => {
+      const input = cartPage.getItemQuantityInput(itemName);
+      await input.fill(String(qty));
+      await input.press('Tab');
+      await expect(input).toHaveValue(String(qty));
+    });
+  }
 
   test('C05 remove item reduces cart count @regression', async ({ cartPage, page }) => {
     await cartPage.getItemRemoveButton(itemName).click();
@@ -55,6 +55,9 @@ test.describe('Cart', () => {
     const input = cartPage.getItemQuantityInput(itemName);
     await input.fill('5');
     await input.press('Tab');
-    await expect(cartPage.cartTotal, 'cart total should update after quantity change').not.toHaveText(before || '', { timeout: 5000 });
+    await expect(
+      cartPage.cartTotal,
+      'cart total should update after quantity change',
+    ).not.toHaveText(before || '', { timeout: 5000 });
   });
 });

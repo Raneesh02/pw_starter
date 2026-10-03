@@ -1,3 +1,8 @@
+export interface UserCredentials {
+  email: string;
+  password: string;
+}
+
 export const USERS = {
   customer: {
     email: 'customer@practicesoftwaretesting.com',
@@ -5,12 +10,16 @@ export const USERS = {
   },
   admin: {
     email: 'admin@practicesoftwaretesting.com',
-    password: 'welcome01',
-    apiToken: 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJhZG1pbiJ9.Zm9vYmFyYmF6',
+    password: process.env.ADMIN_PASSWORD ?? '',
   },
   guest: {
     email: 'guest@example.com',
     firstName: 'Guest',
     lastName: 'User',
   },
+};
+
+export const LOGIN = {
+  wrongPassword: 'not-the-password',
+  invalidCredentialsError: 'Invalid email or password',
 };

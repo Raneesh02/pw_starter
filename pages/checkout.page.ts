@@ -65,7 +65,9 @@ export class CheckoutPage {
     this.streetInput = page.locator('[data-test="street"]');
     this.cityInput = page.locator('[data-test="city"]');
     this.stateInput = page.locator('[data-test="state"]');
-    this.proceedToBillingButton = page.locator('app-address').getByRole('button', { name: 'Proceed to checkout' });
+    this.proceedToBillingButton = page
+      .locator('app-address')
+      .getByRole('button', { name: 'Proceed to checkout' });
 
     // Step 4 — Payment
     this.paymentMethodDropdown = page.locator('[data-test="payment-method"]');
@@ -76,7 +78,7 @@ export class CheckoutPage {
     this.confirmButton = page.getByRole('button', { name: 'Confirm' });
   }
 
-  async continueAsGuest(email: string, firstName: string, lastName: string) {
+  async continueAsGuest(email: string, firstName: string, lastName: string): Promise<void> {
     await this.continueAsGuestTab.click();
     await this.guestEmailInput.fill(email);
     await this.guestFirstNameInput.fill(firstName);
@@ -85,7 +87,7 @@ export class CheckoutPage {
     await this.proceedAfterGuestButton.click();
   }
 
-  async fillAddress(address: AddressData) {
+  async fillAddress(address: AddressData): Promise<void> {
     await this.countryDropdown.selectOption(address.country);
     await this.postalCodeInput.fill(address.postalCode);
     await this.houseNumberInput.fill(address.houseNumber);
@@ -95,7 +97,7 @@ export class CheckoutPage {
     await this.proceedToBillingButton.click();
   }
 
-  async fillPayment(payment: PaymentData) {
+  async fillPayment(payment: PaymentData): Promise<void> {
     await this.paymentMethodDropdown.selectOption(payment.method);
     if (payment.method === 'Credit Card') {
       await this.creditCardNumberInput.fill(payment.cardNumber ?? '');
