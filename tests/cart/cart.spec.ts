@@ -60,4 +60,11 @@ test.describe('Cart', () => {
       'cart total should update after quantity change',
     ).not.toHaveText(before || '', { timeout: 5000 });
   });
+
+  test('C08 decrease item quantity back to one @regression', async ({ cartPage }) => {
+    const input = cartPage.getItemQuantityInput(itemName);
+    await input.fill('1');
+    await input.press('Tab');
+    await expect(input).toHaveValue('1');
+  });
 });
