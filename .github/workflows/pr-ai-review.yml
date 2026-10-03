@@ -1,0 +1,110 @@
+name: PR AI Review (pr-code-review skill)
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: write
+  statuses: write
+
+jobs:
+  pr-ai-review:
+    if: >-
+      github.event.issue.pull_request &&
+      github.event.comment.body == 'ai_review' &&
+      contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Pull Request Code (Full History)
+        uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ github.event.issue.number }}/head
+          fetch-depth: 0
+
+      - name: Get PR head SHA
+        id: pr
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Set pending status
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api repos/${{ github.repository }}/statuses/${{ steps.pr.outputs.sha }} \
+            -f state=pending -f context="pr-ai-review" \
+            -f target_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Claude review
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ github.token }}
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.issue.number }}
+
+            Follow the workflow in .claude/skills/pr-code-review/SKILL.md to review this PR
+            (diff: `git diff origin/main...HEAD`). Read CODE_REVIEW_GUIDELINES.md first, in full.
+            Report only; never edit files, commit, or push.
+
+            Do NOT post anything to GitHub. Write the review to ./review.json (Write tool), using
+            the skill's checklist and severities, but in this exact JSON shape instead of its usual
+            markdown output:
+            {"summary": "<markdown>", "comments": [{"path": "<file>", "line": <int>, "severity": "Blocker|Major|Minor|Suggestion", "section": "§N or —", "body": "<issue — fix>"}]}
+
+            Rules:
+            - One entry in "comments" per finding that maps to a specific line. "line" must be a line
+              added or changed in the PR head (right side of the diff), 1-indexed in the new file.
+            - Findings with no single line (risk triage, coverage gaps, cross-file issues) go in
+              "summary", not "comments".
+            - "summary" markdown format:
+              ## Summary
+              Overall Risk: Low | Medium | High
+              ## Human Review Required
+              **Required:** Yes/No — **Level:** Low/Medium/High — **Reason:** ...
+              End with:
+              checklist: CODE_REVIEW_GUIDELINES.md
+          claude_args: >-
+            --allowedTools "Read,Grep,Glob,Bash(git diff:*),Bash(git status:*),Bash(git log:*),Write"
+
+      - name: Post inline review
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ steps.pr.outputs.sha }}
+        run: |
+          set -euo pipefail
+          jq -e '(.summary | type == "string") and (.comments | type == "array")' review.json > /dev/null
+          api="repos/${{ github.repository }}/pulls/${{ github.event.issue.number }}/reviews"
+          jq --arg sha "$SHA" '{
+            commit_id: $sha, event: "COMMENT", body: .summary,
+            comments: [.comments[] | {path, line, side: "RIGHT",
+              body: ("**" + .severity + "**" + (if (.section // "—") != "—" then " (" + .section + ")" else "" end) + " — " + .body)}]
+          }' review.json > payload.json
+          if ! gh api "$api" --input payload.json > /dev/null; then
+            echo "::warning::Inline post rejected (line not in diff?); falling back to a single summary review."
+            jq --arg sha "$SHA" '{
+              commit_id: $sha, event: "COMMENT",
+              body: (.summary + "\n\n## Findings\n" + ([.comments[] | "- `\(.path):\(.line)` **\(.severity)** \(.section // "—") — \(.body)"] | join("\n")))
+            }' review.json > fallback.json
+            gh api "$api" --input fallback.json > /dev/null
+          fi
+
+      - name: Report final status
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api repos/${{ github.repository }}/statuses/${{ steps.pr.outputs.sha }} \
+            -f state=${{ job.status == 'success' && 'success' || 'failure' }} -f context="pr-ai-review" \
+            -f target_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
