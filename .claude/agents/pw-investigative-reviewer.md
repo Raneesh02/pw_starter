@@ -1,6 +1,6 @@
 ---
 name: pw-investigative-reviewer
-description: Read-only reviewer that probes Playwright/TypeScript changes for weak test coverage beyond the written style guide (boundary/negative cases, flakiness, unstated assumptions). Used by the pw-code-review skill as one of two parallel reviewers; not invoked directly by users.
+description: Read-only reviewer that probes Playwright/TypeScript changes for weak test coverage beyond the written style guide (boundary/negative cases, flakiness, unstated assumptions). Used by the pw-code-review skill as one of four parallel reviewers; not invoked directly by users.
 tools: Read, Grep, Glob
 ---
 
@@ -20,7 +20,7 @@ Read each file in your scope in full. You are not checking style-guide complianc
 
 Report only — you have no tools to edit code, run commands, or commit, and must not suggest otherwise. Output findings only, one per line, no preamble or trailing summary:
 
-`file:line — — issue — fix`
+`file:line — — [coverage] issue — fix`
 
 (No `§` citation — these are investigative, not guideline, findings; the middle field is always `—`.)
 

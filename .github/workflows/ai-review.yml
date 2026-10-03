@@ -41,7 +41,7 @@ jobs:
           echo "state=$state" >> "$GITHUB_OUTPUT"
           if [ "$state" != "success" ]; then
             gh pr comment ${{ github.event.issue.number }} --repo ${{ github.repository }} \
-              --body "AI review skipped: required **static-checks** status is \`$state\`. Comment \`static_check\`, fix any failures, then comment \`ai_review\` again."
+              --body "AI review skipped: required **static-checks** status is \`$state\`. Static checks run automatically on each PR push; fix any failures, then comment \`ai_review\` again."
           fi
 
       - name: Set pending status
@@ -78,10 +78,12 @@ jobs:
 
             Follow the workflow in .claude/skills/pw-code-review/SKILL.md against this PR
             (diff: `git diff origin/main...HEAD`). Read agent-context/CODING_GUIDELINES.md first.
+            Launch all four reviewer sub-agents (pw-guideline-reviewer, pw-architecture-reviewer,
+            pw-security-reviewer, pw-investigative-reviewer) in parallel in a single message.
             Report only; never edit files, commit, or push.
 
             Do NOT post anything to GitHub. Write the review to ./review.json (Write tool) as:
-            {"summary": "<markdown>", "comments": [{"path": "<file>", "line": <int>, "severity": "Blocker|Major|Minor|Suggestion", "section": "§N or —", "body": "<issue — fix>"}]}
+            {"summary": "<markdown>", "comments": [{"path": "<file>", "line": <int>, "severity": "Blocker|Major|Minor|Suggestion", "category": "standards|architecture|security|coverage", "section": "§N or —", "body": "<issue — fix>"}]}
 
             Rules:
             - One entry in "comments" per finding that maps to a specific line. "line" must be a line
@@ -93,8 +95,10 @@ jobs:
               ## Human Review Required
               **Required:** Yes/No — **Level:** Low/Medium/High — **Reason:** ...
               (High: auth, payments, security, core config; Medium: complex page workflows; Low: routine specs.)
+              ## Findings by category
+              One line per category (standards, architecture, security, coverage) with its finding count.
               End with:
-              reviewers: pw-guideline-reviewer, pw-investigative-reviewer
+              reviewers: pw-guideline-reviewer, pw-architecture-reviewer, pw-security-reviewer, pw-investigative-reviewer
               tests: <n> passed / <n> failed
           claude_args: >-
             --allowedTools "Agent,Task,Read,Grep,Glob,Bash(git diff:*),Bash(git status:*),Bash(git log:*),Bash(npx playwright test:*),Write"
@@ -111,13 +115,13 @@ jobs:
           jq --arg sha "$SHA" '{
             commit_id: $sha, event: "COMMENT", body: .summary,
             comments: [.comments[] | {path, line, side: "RIGHT",
-              body: ("**" + .severity + "**" + (if (.section // "—") != "—" then " (" + .section + ")" else "" end) + " — " + .body)}]
+              body: ("**" + .severity + "**" + (if .category then " `" + .category + "`" else "" end) + (if (.section // "—") != "—" then " (" + .section + ")" else "" end) + " — " + .body)}]
           }' review.json > payload.json
           if ! gh api "$api" --input payload.json > /dev/null; then
             echo "::warning::Inline post rejected (line not in diff?); falling back to a single summary review."
             jq --arg sha "$SHA" '{
               commit_id: $sha, event: "COMMENT",
-              body: (.summary + "\n\n## Findings\n" + ([.comments[] | "- `\(.path):\(.line)` **\(.severity)** \(.section // "—") — \(.body)"] | join("\n")))
+              body: (.summary + "\n\n## Findings\n" + ([.comments[] | "- `\(.path):\(.line)` **\(.severity)** \(.category // "") \(.section // "—") — \(.body)"] | join("\n")))
             }' review.json > fallback.json
             gh api "$api" --input fallback.json > /dev/null
           fi

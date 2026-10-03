@@ -60,4 +60,14 @@ test.describe('Cart', () => {
       'cart total should update after quantity change',
     ).not.toHaveText(before || '', { timeout: 5000 });
   });
+
+  test('C08 quantity persists after page reload @regression', async ({ cartPage, page }) => {
+    await cartPage.updateQuantity(itemName, 2);
+    await cartPage.getItemQuantityInput(itemName).press('Tab');
+    await page.reload();
+    await expect(
+      cartPage.getItemQuantityInput(itemName),
+      'quantity should persist after reload',
+    ).toHaveValue('2');
+  });
 });
