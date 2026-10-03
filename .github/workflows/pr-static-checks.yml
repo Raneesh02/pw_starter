@@ -4,6 +4,10 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   lint-and-typecheck:
     name: ESLint + tsc --noEmit
@@ -23,3 +27,51 @@ jobs:
 
       - name: Lint
         run: npm run lint
+
+  code-review:
+    name: Code review (CODE_REVIEW_GUIDELINES.md)
+    needs: lint-and-typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Run Claude code review
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ github.token }}
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+            BASE: origin/${{ github.event.pull_request.base.ref }}
+
+            Follow the workflow in .claude/skills/pr-code-review/SKILL.md to review this PR
+            (diff: `git diff origin/${{ github.event.pull_request.base.ref }}...HEAD`).
+            Read CODE_REVIEW_GUIDELINES.md first, in full.
+
+            Write the review to ./review.md (Write tool) in the output format the skill specifies.
+            Do NOT post anything to GitHub yourself — a later step posts ./review.md as the PR comment.
+          claude_args: >-
+            --allowedTools "Read,Grep,Glob,Bash(git diff:*),Bash(git status:*),Bash(git log:*),Write"
+
+      - name: Post review as PR comment
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -s review.md ]; then
+            gh pr comment ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --body-file review.md
+          else
+            gh pr comment ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --body "pr-code-review: the review step did not produce output (check the workflow run log)."
+          fi
