@@ -1,0 +1,4 @@
+{
+  "default": { "maxCostUsd": 5, "maxDurationMs": 600000, "maxToolCalls": 150 },
+  "tolerance": { "apiMs": 0.25, "costUsd": 0.25, "outputTokens": 0.25, "toolCalls": 0.5 }
+}
