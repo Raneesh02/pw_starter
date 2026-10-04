@@ -1,0 +1,26 @@
+name: Static checks
+
+on:
+  push:
+    branches: [main, mcp_playwright]
+  pull_request:
+
+jobs:
+  static-checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Type-check
+        run: npm run typecheck
+      - name: Lint
+        run: npm run lint
+      - name: Format check
+        run: npm run format:check
+      - name: Verify specs load and test IDs resolve
+        run: npx playwright test --list

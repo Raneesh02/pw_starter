@@ -1,0 +1,81 @@
+# Output of state 1 (get_locators) -> input to create_page_objects
+# Source: https://practicesoftwaretesting.com/contact, explored with the Playwright MCP on 2026-10-02
+# Focus: the Message field. verified: true = exercised in the live browser.
+
+page: contact
+url: /contact
+
+locators:
+  message_input:
+    locator: "page.locator('[data-test=\"message\"]')"
+    alternatives:
+      - "page.getByRole('textbox', { name: 'Message *' })"
+    notes: textarea, rows=5, id=message, formcontrolname=message, no placeholder
+    verified: true
+  message_error:
+    locator: "page.locator('[data-test=\"message-error\"]')"
+    notes: appears only after a submit attempt; also rendered inside a .alert.alert-danger
+    verified: true
+  submit_button:
+    locator: "page.locator('[data-test=\"contact-submit\"]')"
+    alternatives:
+      - "page.getByRole('button', { name: 'Send' })"
+    verified: true
+  success_alert:
+    locator: "page.locator('.alert-success')"
+    alternatives:
+      - "page.getByText(/thanks for your message/i)"
+    notes: the form is removed from the DOM after a successful submit
+    verified: true
+  server_error_alert:
+    locator: "page.locator('.alert-danger')"
+    notes: used for server-side 422 errors, which do NOT populate message-error
+    verified: true
+  # Other fields needed to make a form valid
+  first_name_input: { locator: "page.locator('[data-test=\"first-name\"]')", verified: true }
+  last_name_input: { locator: "page.locator('[data-test=\"last-name\"]')", verified: true }
+  email_input: { locator: "page.locator('[data-test=\"email\"]')", verified: true }
+  subject_select:
+    locator: "page.locator('[data-test=\"subject\"]')"
+    notes: no default selection. selectOption by label ('Customer service') or value ('customer-service')
+    verified: true
+
+# Observed behaviour of the Message field
+validation:
+  required: true
+  min_length: 50            # client-side
+  max_length: 250           # server-side only (422); found while running the specs in state 3
+  messages:
+    empty: "Message is required"
+    too_short: "Message must be minimal 50 characters"
+    server_blank: "The message field is required."   # 422 from POST /messages
+    server_too_long: "The message field must not be greater than 250 characters."   # 422, in .alert-danger
+  api: POST https://api.practicesoftwaretesting.com/messages   # 200 on success, 422 on server rejection
+
+# Scenarios tried (all against the live site)
+scenarios:
+  positive:
+    - id: M-P1
+      input: exactly 50 chars
+      result: "POST /messages 200, alert-success 'Thanks for your message! We will contact you shortly.', form removed"
+    - id: M-P2
+      input: "HTML/script tags, accents, CJK, emoji, quotes, & (about 110 chars)"
+      result: "POST /messages 200 (accepted). No alert/dialog check done"
+  negative:
+    - id: M-N1
+      input: empty message, all other fields empty
+      result: "'Message is required' (message-error) plus the four other required errors, no request sent"
+    - id: M-N2
+      input: 5 chars ('short'), other fields valid
+      result: "'Message must be minimal 50 characters', no request sent"
+    - id: M-N3
+      input: 49 chars (boundary), other fields valid
+      result: "'Message must be minimal 50 characters', no request sent"
+    - id: M-N4
+      input: 60 spaces, other fields valid
+      result: "BUG/QUIRK: passes client validation, POST /messages returns 422, alert-danger 'The message field is required.', message-error stays empty"
+
+notes:
+  - Typing is needed for validation. Setting .value and dispatching input/change events from JS did not register, so use Playwright fill().
+  - The M-N4 whitespace case is a client/server mismatch, so assert on '.alert-danger', not on message-error.
+  - Tests must not run in parallel against the same field state, but each test gets a fresh page, so this is fine.

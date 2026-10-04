@@ -1,5 +1,6 @@
 import { Page } from '@playwright/test';
 import { HomePage } from '../pages/home.page';
+import { CartPage } from '../pages/cart.page';
 import { CheckoutPage, AddressData, PaymentData } from '../pages/checkout.page';
 import { ProductPage } from '../pages/product.page';
 
@@ -7,6 +8,7 @@ export class ShopFacade {
   constructor(
     private readonly page: Page,
     private readonly homePage: HomePage,
+    private readonly cartPage: CartPage,
     private readonly checkoutPage: CheckoutPage,
     private readonly productPage: ProductPage,
   ) {}
@@ -24,13 +26,15 @@ export class ShopFacade {
 
   async addToCartAndGoToCart(keyword: string): Promise<string> {
     const name = await this.addToCart(keyword);
-    await this.page.goto('/cart');
+    await this.homePage.goToCart();
     return name;
   }
 
   async addToCartAndGoToCheckout(keyword: string): Promise<void> {
     await this.addToCart(keyword);
-    await this.page.goto('/checkout');
+    await this.homePage.goToCart();
+    // Landing on /checkout only reaches step 1 (CART); advance to step 2 (SIGN IN).
+    await this.cartPage.proceedToCheckout();
   }
 
   async fullGuestCheckout(

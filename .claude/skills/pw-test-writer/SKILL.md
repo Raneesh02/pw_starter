@@ -10,7 +10,7 @@ Generate a new Playwright spec (or extend an existing one) for pw_starter, match
 Before writing code, read:
 - `references/conventions.md` (in this skill dir) — fixtures/POM/facade/data/spec/ID rules with worked snippets
 - `references/checklist.md` (in this skill dir) — pre-flight/post-flight checklist
-- repo-root `references/reference.md` — only if this task is parameterized/data-driven
+- `agent-context/reference.md` — only if this task is parameterized/data-driven
 
 ## Workflow
 

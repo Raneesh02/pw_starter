@@ -1,0 +1,55 @@
+# Workflow state tracker. Copy this file to workflow/runs/<YYYY-MM-DD>_<feature>/state.yml
+# to start a new execution. One folder per execution; all stage outputs live in that folder.
+#
+# Flow: get_locators -> create_page_objects -> write_tests
+# Each state writes an output file that the next state reads as its input.
+# status values: pending | in_progress | done | blocked
+
+run_id: <YYYY-MM-DD>_<feature>
+feature: <feature>
+source_url: <link to explore>
+started_at: null
+updated_at: null
+current_state: get_locators
+
+states:
+  get_locators:
+    order: 1
+    status: pending
+    description: Explore source_url with the Playwright MCP and capture locators.
+    input:
+      source_url: <link to explore>
+    output:
+      file: 01_locators.yml        # relative to this run folder
+    next: create_page_objects
+
+  create_page_objects:
+    order: 2
+    status: pending
+    description: Turn the captured locators into page objects and wire them into fixtures/facade.
+    input:
+      from: get_locators
+      file: 01_locators.yml
+    output:
+      file: 02_page_objects.yml    # manifest: files created/changed + exposed methods
+    next: write_tests
+
+  write_tests:
+    order: 3
+    status: pending
+    description: Write specs that use the page objects through the fixtures.
+    input:
+      from: create_page_objects
+      file: 02_page_objects.yml
+    output:
+      file: 03_tests.yml           # manifest: spec files, test IDs, run result
+    conventions:
+      - import test/expect from ../../fixtures
+      - title prefixed with an ID, e.g. CT01
+      - tag with @regression
+    next: null
+
+# Output file shapes
+# 01_locators.yml:      page -> element -> { locator, alternatives[], verified }
+# 02_page_objects.yml:  files[] (created/modified), fixtures[], methods[] (name + purpose)
+# 03_tests.yml:         files[], tests[] (id, title), result (command + pass/fail)

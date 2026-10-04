@@ -1,0 +1,46 @@
+# Execution state for the contact feature. See workflow/state.template.yml for the format.
+# status values: pending | in_progress | done | blocked
+
+run_id: 2026-10-02_contact
+feature: contact
+source_url: https://practicesoftwaretesting.com/contact
+started_at: 2026-10-02
+updated_at: 2026-10-02
+current_state: done
+
+states:
+  get_locators:
+    order: 1
+    status: done            # 01_locators.yml written 2026-10-02 (focus: Message field)
+    description: Explore source_url with the Playwright MCP and capture locators.
+    input:
+      source_url: https://practicesoftwaretesting.com/contact
+    output:
+      file: 01_locators.yml
+    next: create_page_objects
+
+  create_page_objects:
+    order: 2
+    status: done
+    description: Turn the captured locators into page objects and wire them into fixtures/facade.
+    input:
+      from: get_locators
+      file: 01_locators.yml
+    output:
+      file: 02_page_objects.yml
+    next: write_tests
+
+  write_tests:
+    order: 3
+    status: done
+    description: Write specs that use the page objects through the fixtures.
+    input:
+      from: create_page_objects
+      file: 02_page_objects.yml
+    output:
+      file: 03_tests.yml
+    conventions:
+      - import test/expect from ../../fixtures
+      - title prefixed with an ID, e.g. CT01
+      - tag with @regression
+    next: null

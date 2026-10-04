@@ -1,0 +1,24 @@
+# Output of state 3 (write_tests)
+files:
+  - tests/contact/contact.spec.ts
+
+tests_added:
+  positive:
+    - CN06-01  exactly 50 characters
+    - CN06-02  51 characters
+    - CN06-03  exactly 250 characters (maximum)
+    - CN06-04  HTML, unicode and quotes
+  negative:
+    - CN07-01  1 character
+    - CN07-02  49 characters
+    - CN07-03  empty message
+    - CN07-04  whitespace-only, server 422
+    - CN07-05  251 characters, server 422
+
+result:
+  command: npx playwright test tests/contact/contact.spec.ts
+  outcome: "22 passed (whole contact spec), tsc --noEmit clean"
+  date: 2026-10-02
+
+findings:
+  - A first run failed on a 5000-character "valid" case, which showed the server limit of 250 characters. The earlier exploration claim of "no max" was wrong because that probe never actually submitted.

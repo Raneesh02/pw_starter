@@ -4,15 +4,28 @@
   "private": true,
   "scripts": {
     "test": "playwright test --grep \"C01\" --headed",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test:ui": "playwright test --ui",
     "test:headed": "playwright test --headed",
     "test:report": "playwright show-report",
-    "setup": "playwright test tests/auth.setup.ts"
+    "setup": "playwright test tests/auth.setup.ts",
+    "eval:review:grader": "playwright test -c evals/code-review grader.spec judge.spec",
+    "eval:review": "playwright test -c evals/code-review agent.eval",
+    "eval:review:judge": "playwright test -c evals/code-review calibration.eval"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.44.0",
     "@types/node": "^25.8.0",
     "dotenv": "^16.4.0",
-    "typescript": "^5.4.0"
+    "eslint": "^10.12.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-playwright": "^2.12.0",
+    "prettier": "^3.9.9",
+    "typescript": "^5.4.0",
+    "typescript-eslint": "^8.71.0"
   }
 }

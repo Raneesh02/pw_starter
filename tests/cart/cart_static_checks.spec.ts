@@ -1,9 +1,7 @@
 import { expect, test } from '../../fixtures';
-import { PRODUCTS } from '../../data/products';
 
 test.describe('Cart Static Checks Demo', () => {
-
-  test('C99 static check demo test @regression', async ({ cartPage }) => {
+  test('C99 static check demo test @regression', async () => {
     // Fixed: Type/Compilation error resolved by assigning a number
     const quantity: number = 5;
 

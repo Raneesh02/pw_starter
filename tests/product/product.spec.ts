@@ -13,7 +13,10 @@ test.describe('Product', () => {
     expect(await names.count()).toBeGreaterThan(0);
   });
 
-  test('P02 search non-existing product shows empty state @regression', async ({ homePage, page }) => {
+  test('P02 search non-existing product shows empty state @regression', async ({
+    homePage,
+    page,
+  }) => {
     await homePage.searchFor(PRODUCTS.search.invalidKeyword);
     await expect(page.getByText(/no products found/i)).toBeVisible();
   });
@@ -43,9 +46,13 @@ test.describe('Product', () => {
     await expect(page).toHaveURL(/\/product\//);
   });
 
-  test('P08 increase quantity via stepper adds correct amount to cart @regression', async ({ homePage, productPage, cartPage, page }) => {
+  test('P08 increase quantity via stepper adds correct amount to cart @regression', async ({
+    homePage,
+    productPage,
+    cartPage,
+    page,
+  }) => {
     await homePage.searchFor(PRODUCTS.search.validKeyword);
-    await page.waitForLoadState('networkidle');
     await page.locator('[class="card skeleton"]').first().waitFor({ state: 'hidden' });
     await homePage.getProductCardNames().first().click();
     const itemName = ((await productPage.productName.textContent()) ?? '').trim();

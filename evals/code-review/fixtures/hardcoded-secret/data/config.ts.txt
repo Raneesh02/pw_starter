@@ -1,0 +1,9 @@
+export interface ApiConfig {
+  baseUrl: string;
+  apiKey: string;
+}
+
+export const API_CONFIG: ApiConfig = {
+  baseUrl: 'https://api.practicesoftwaretesting.com',
+  apiKey: 'a8f3c2d19e4b47f6b0c5d7e2918a6f34',
+};

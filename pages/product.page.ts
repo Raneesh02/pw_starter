@@ -27,19 +27,20 @@ export class ProductPage {
     this.addToCartButton = page.locator('[data-test="add-to-cart"]');
     this.addToFavouritesButton = page.getByRole('button', { name: 'Add to favourites' });
     this.compareButton = page.getByRole('button', { name: 'Compare' });
-    this.relatedProducts = page.getByRole('heading', { level: 2, name: 'Related products' })
+    this.relatedProducts = page
+      .getByRole('heading', { level: 2, name: 'Related products' })
       .locator('..')
       .getByRole('heading', { level: 5 });
   }
 
-  async addToCart(qty = 1) {
+  async addToCart(qty = 1): Promise<void> {
     if (qty > 1) {
       await this.quantityInput.fill(String(qty));
     }
     await this.addToCartButton.click();
   }
 
-  async setQuantity(qty: number) {
+  async setQuantity(qty: number): Promise<void> {
     await this.quantityInput.fill(String(qty));
   }
 }

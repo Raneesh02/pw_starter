@@ -1,0 +1,8 @@
+export interface Product {
+  name: string;
+  keyword: string;
+}
+
+export const PRODUCTS = {
+  pliers: { name: 'Combination Pliers', keyword: 'pliers' },
+} satisfies Record<string, Product>;

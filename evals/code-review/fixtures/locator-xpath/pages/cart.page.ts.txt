@@ -1,0 +1,21 @@
+import { Locator, Page } from '@playwright/test';
+
+export class CartPage {
+  readonly cartItems: Locator;
+  readonly checkoutButton: Locator;
+  readonly removeButton: Locator;
+
+  constructor(private readonly page: Page) {
+    this.cartItems = page.getByTestId('product-title');
+    this.checkoutButton = page.getByRole('button', { name: 'Proceed to checkout' });
+    this.removeButton = page.locator('//table//tr[1]//a[@class="btn btn-danger"]');
+  }
+
+  async goto(): Promise<void> {
+    await this.page.goto('/checkout');
+  }
+
+  async removeFirstItem(): Promise<void> {
+    await this.removeButton.click();
+  }
+}

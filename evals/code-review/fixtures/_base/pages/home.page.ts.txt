@@ -1,0 +1,25 @@
+import { Locator, Page } from '@playwright/test';
+
+export class HomePage {
+  readonly searchInput: Locator;
+  readonly searchButton: Locator;
+
+  constructor(private readonly page: Page) {
+    this.searchInput = page.getByPlaceholder('Search');
+    this.searchButton = page.getByRole('button', { name: 'Search' });
+  }
+
+  async goto(): Promise<void> {
+    await this.page.goto('/');
+  }
+
+  async searchFor(keyword: string): Promise<void> {
+    await this.searchInput.fill(keyword);
+    await this.searchButton.click();
+  }
+
+  async addProductToCart(productName: string): Promise<void> {
+    await this.page.getByRole('link', { name: productName }).click();
+    await this.page.getByRole('button', { name: 'Add to cart' }).click();
+  }
+}

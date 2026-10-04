@@ -1,0 +1,26 @@
+import { test, expect } from '../../fixtures';
+import { PRODUCTS } from '../../data/products';
+
+test.describe('Cart', () => {
+  test(
+    'C01 – should list the product when it is added to the cart',
+    { tag: '@regression' },
+    async ({ homePage, cartPage }) => {
+      await homePage.goto();
+      await homePage.searchFor(PRODUCTS.pliers.keyword);
+      await homePage.addProductToCart(PRODUCTS.pliers.name);
+      await cartPage.goto();
+      await expect(cartPage.cartItems).toHaveCount(1);
+    },
+  );
+
+  test(
+    'C02 – should show the empty-cart message when no product was added',
+    { tag: ['@regression', '@negative'] },
+    async ({ cartPage }) => {
+      await cartPage.goto();
+      await expect(cartPage.emptyCartMessage).toBeVisible();
+      await expect(cartPage.cartItems).toHaveCount(0);
+    },
+  );
+});

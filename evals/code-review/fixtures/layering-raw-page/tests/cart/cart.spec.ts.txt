@@ -1,0 +1,26 @@
+import { test, expect } from '../../fixtures';
+import { PRODUCTS } from '../../data/products';
+
+test.describe('Cart', () => {
+  test(
+    'C01 – should list the product when it is added to the cart',
+    { tag: '@regression' },
+    async ({ homePage, cartPage }) => {
+      await homePage.goto();
+      await homePage.searchFor(PRODUCTS.pliers.keyword);
+      await homePage.addProductToCart(PRODUCTS.pliers.name);
+      await cartPage.goto();
+      await expect(cartPage.cartItems).toHaveCount(1);
+    },
+  );
+
+  test(
+    'C02 – should open the checkout page when the cart link is clicked',
+    { tag: '@regression' },
+    async ({ homePage, page }) => {
+      await homePage.goto();
+      await page.getByRole('link', { name: 'Cart' }).click();
+      await expect(page).toHaveURL(/checkout/);
+    },
+  );
+});

@@ -12,8 +12,12 @@ export class CartPage {
   constructor(page: Page) {
     this.page = page;
     this.cartTable = page.getByRole('table');
-    this.cartRows = page.getByRole('row').filter({ hasNot: page.getByRole('columnheader') });
-    this.cartTotal = page.getByRole('cell', { name: 'Total' }).locator('..').getByRole('cell').last();
+    // Scoped to rows that contain a product line, since the cart table also
+    // renders a totals row that would otherwise be counted as a cart item.
+    this.cartRows = page
+      .getByRole('row')
+      .filter({ has: page.locator('[data-test="product-title"]') });
+    this.cartTotal = page.locator('[data-test="cart-total"]');
     this.continueShoppingButton = page.getByRole('button', { name: 'Continue Shopping' });
     this.proceedToCheckoutButton = page.locator('[data-test="proceed-1"]');
   }
@@ -27,7 +31,7 @@ export class CartPage {
   }
 
   getItemRemoveButton(itemName: string): Locator {
-    return this.page.getByRole('row', { name: new RegExp(itemName) }).locator('img[src*="trash"], img[alt*="delete"], td:last-child img').last();
+    return this.page.getByRole('row', { name: new RegExp(itemName) }).locator('a.btn-danger');
   }
 
   async updateQuantity(itemName: string, qty: number) {

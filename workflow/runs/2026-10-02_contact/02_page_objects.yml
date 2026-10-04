@@ -1,0 +1,20 @@
+# Output of state 2 (create_page_objects) -> input to write_tests
+files:
+  - path: pages/contact.page.ts
+    change: modified
+    detail: added serverErrorAlert (.alert-danger). Message locators (messageInput, messageError) and successMessage already existed
+  - path: data/contact.ts
+    change: modified
+    detail: added MESSAGE_MIN_LENGTH, VALID_MESSAGE_CASES (CN06-xx), INVALID_MESSAGE_CASES (CN07-xx)
+  - path: fixtures/index.ts
+    change: unchanged
+    detail: contactPage fixture already injected
+
+exposed_members:
+  - ContactPage.messageInput
+  - ContactPage.messageError
+  - ContactPage.successMessage
+  - ContactPage.serverErrorAlert
+  - ContactPage.submitForm(data)
+  - ContactPage.fillForm(data)
+  - ContactPage.submit()
